@@ -8,7 +8,8 @@ export default function App() {
   return (
     <NavigationContainer >
       <Stack.Navigator intialRouteName="WelcomeScreen">
-        <Stack.Screen name="WelcomeScreen" component={WelcomeScreen}/>
+      {/*change headerShown to false to remove top of screen*/}
+        <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: true }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
