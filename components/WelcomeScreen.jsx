@@ -1,11 +1,13 @@
 import React from 'react'
 import { View, StyleSheet } from 'react-native'
 import NextScreenBtn from './NextScreenBtn'
+import { useNavigation } from '@react-navigation/native'
 
 const WelcomeScreen = () => {
+  const navigation = useNavigation();
   return (
     <View style={styles.screen}>
-      <NextScreenBtn btnText="Create New Bill"/>
+      <NextScreenBtn navigation={navigation} targetScreen="" btnText="Create New Bill"/>
     </View>
   )
 }
