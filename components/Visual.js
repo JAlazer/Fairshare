@@ -21,7 +21,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Futura-Medium',
     fontSize: 36,
     color: '#00008B',
-    padding: '0',
     marginLeft: '0',
     marginBottom: '5%',
     textAlign: 'left'
