@@ -10,7 +10,7 @@ export default function App() {
     <NavigationContainer >
       <Stack.Navigator intialRouteName="WelcomeScreen">
       {/*change headerShown to false to remove top of screen*/}
-        <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: true }}/>
+        <Stack.Screen name="WelcomeScreen" component={WelcomeScreen} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
