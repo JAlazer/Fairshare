@@ -1,6 +1,7 @@
 import React, { Component, useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
 
+
 const Bill =() => {
   const [rows, setRows] = useState([]);
   const [foodName, setFoodName] = useState('');
@@ -9,6 +10,9 @@ const Bill =() => {
 
   const [percent, setPercent] = useState('');
 
+  const [tax, setTax] = useState('');
+
+  let total = 69.69;   // TO-BE CHANGED ONCE CALCULATE BILL METHOD IS MADE
 
   const addRow = () => {
     if (foodName && price && fraction) {
@@ -20,18 +24,22 @@ const Bill =() => {
   };
 
   return (
+    
     <View style={styles.container}>
-      <Text style={styles.label}>New Bill</Text>
-      <View style={styles.inputRow}>
+        {/* HEADING FOR NEW BILL */}
+        <h1 style={styles.h1}>New Bill</h1>
+
+        {/* INPUT GRID */}
+      <View style={styles.inputRow}>    
         <TextInput
           style={styles.input}
-          placeholder="Food Item Name"
+          placeholder="Food Item"
           value={foodName}
           onChangeText={(text) => setFoodName(text)}
         />
         <TextInput
           style={styles.input}
-          placeholder="Price (in $)"
+          placeholder="Price in $"
           value={price}
           onChangeText={(text) => setPrice(text)}
         />
@@ -43,6 +51,8 @@ const Bill =() => {
         />
         <Button title="Add" onPress={addRow} />
       </View>
+
+      {/* VIEW ONCE INFO IS ENTERED INTO EACH ROW */}
       <FlatList
         data={rows}
         keyExtractor={(item, index) => index.toString()}
@@ -54,6 +64,8 @@ const Bill =() => {
           </View>
         )}
       />
+
+      {/* ENTERING PERCENTAGE TIP */}
       <View>
         <Text style={styles.label}>Enter Percentage of tip</Text>
         <TextInput
@@ -63,6 +75,25 @@ const Bill =() => {
             onChangeText={(percent) => setPercent(percent)}
         />
       </View>
+
+      {/* ENTERING TAX! */}
+      <View>
+        <TextInput 
+            style={styles.input}
+            placeholder="Enter tax:"
+            value={tax}
+            onChangeText={(tax) => setTax(tax)}
+        />
+      </View>
+
+      {/* TODO: CALCULATION OF TOTAL IN SPERATE METHOD PERHAPS */}
+      <View>
+        <Text
+            style={styles.label}>
+                Your total is: ${total}
+        </Text>
+      </View>
+
     </View> 
   );
 }
@@ -97,6 +128,9 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 5,
   },
+  h1: {
+    textAlign: 'center'
+  }
 }
 );
 
