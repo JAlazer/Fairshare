@@ -1,4 +1,4 @@
-import { View } from "react-native"
+import { View, Text } from "react-native"
 import React, {useState} from "react";
 
 const Bill = () => {
@@ -8,3 +8,5 @@ const Bill = () => {
         </View>
     );
 }
+
+export default Bill;
