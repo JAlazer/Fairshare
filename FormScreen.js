@@ -8,28 +8,8 @@ const FormScreen = () => {
     const buttons = [];
     for (let i = 0; i < value; i++) {
       buttons.push(
-        <Pressable
-          style={{
-            backgroundColor: "#00008B",
-            justifyContent: "center",
-            alignItems: "center",
-            height: 40,
-            width: 100,
-            marginBottom: "10%",
-            borderRadius: "10px",
-          }}
-          key={i}
-        >
-          <Text
-            style={{
-              fontSize: 16,
-              lineHeight: 21,
-              letterSpacing: 0.25,
-              color: "white",
-            }}
-          >
-            Person {i + 1}
-          </Text>
+        <Pressable style={styles.button} key={i}>
+          <Text style={styles.text}>Person {i + 1}</Text>
         </Pressable>
       );
     }
@@ -53,18 +33,10 @@ const FormScreen = () => {
 
   return (
     <View style={{ justifyContent: "space-evenly", alignItems: "center" }}>
-      <View
-        style={{
-          alignItems: "center",
-          justifyContent: "flex-start",
-          paddingTop: "20%",
-          marginBottom: "10%",
-          width: "51.2%",
-        }}
-      >
+      <View style={styles.view1}>
         <Text>How many people?</Text>
         <DropDownPicker
-          style={{ width: 200 }}
+          style={styles.dropdown}
           open={open}
           value={value}
           items={items}
@@ -73,45 +45,26 @@ const FormScreen = () => {
           setItems={setItems}
         />
       </View>
-      <View
-        style={{
-          flexWrap: "wrap",
-          flexDirection: "row",
-          justifyContent: "space-evenly",
-          alignItems: "stretch",
-          marginTop: "50%",
-        }}
-      >
-        {createButtons()}
-      </View>
+      <View style={styles.view2}>{createButtons()}</View>
       <StatusBar style="auto" />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  field: {
-    height: 40,
-    width: 100,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
-  },
   view1: {
-    flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "flex-start",
     paddingTop: "20%",
     marginBottom: "10%",
-    gap: 10,
+    width: "51.2%",
   },
   view2: {
-    flex: 2,
     flexWrap: "wrap",
     flexDirection: "row",
     justifyContent: "space-evenly",
     alignItems: "stretch",
+    marginTop: "50%",
   },
   button: {
     backgroundColor: "#00008B",
