@@ -1,14 +1,14 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import NextScreenBtn from "./NextScreenBtn";
+import NextScreenBtn from "../components/NextScreenBtn";
 import { useNavigation } from "@react-navigation/native";
-import Visual from "./Visual";
+import Visual from "../components/Visual";
 
 const WelcomeScreen = () => {
   const navigation = useNavigation();
   return (
     <View style={styles.screen}>
-      <Visual></Visual>
+      <Visual/>
       <NextScreenBtn
         navigation={navigation}
         targetScreen="FormScreen"
