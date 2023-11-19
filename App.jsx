@@ -4,13 +4,14 @@ import { createStackNavigator } from "@react-navigation/stack";
 import "react-native-gesture-handler";
 import WelcomeScreen from "./screens/WelcomeScreen";
 import FormScreen from "./screens/FormScreen";
+import FoodSplitScreen from "./screens/FoodSplitScreen"
 
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator intialRouteName="WelcomeScreen">
+      <Stack.Navigator intialRouteName="FoodSplitScreen">
         {/*change headerShown to false to remove top of screen*/}
         <Stack.Screen
           name="WelcomeScreen"
@@ -21,6 +22,10 @@ export default function App() {
           name="FormScreen"
           component={FormScreen}
           options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="FoodSplitScreen"
+          component={FoodSplitScreen}
         />
       <Stack.Screen
           name="BillScreen"
