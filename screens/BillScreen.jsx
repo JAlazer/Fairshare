@@ -1,5 +1,5 @@
 import React, { Component, useState } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet, Pressable } from 'react-native';
+import { View, Text, TextInput, Button, FlatList, StyleSheet, Pressable, PanResponder, Animated, TouchableOpacity } from 'react-native';
 import NextScreenBtn from "../components/NextScreenBtn";
 import { useNavigation } from "@react-navigation/native";
 
@@ -11,7 +11,7 @@ const Bill =() => {
 
   const [foodName, setFoodName] = useState('');
   const [price, setPrice] = useState(0.0);
-  const [fraction, setFraction] = useState(0.0);
+
 
   const [percent, setPercent] = useState(0.0);
 
@@ -22,26 +22,58 @@ const Bill =() => {
   const [total, setTotal] = useState(0.0);
 
   const parsedPrice = parseFloat(price);
-  const parsedFrac = parseFloat(fraction);
   const parsedPercent = parseFloat(percent);
   const parsedTax = parseFloat(tax);
 
+  const pan = useRef(new Animated.ValueXY()).current;
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponderCapture: () => true,
+      onPanResponderMove: (_, gesture) => {
+        pan.setValue({ x: gesture.dx, y: gesture.dy });
+      },
+      onPanResponderRelease: (_, gesture) => {
+        if (gesture.dx > 100) {
+          // Swiped right (delete action)
+          // Implement your delete logic here
+          // For example:
+          // deleteRow(rowId);
+        } else if (gesture.dx < -100) {
+          // Swiped left (edit action)
+          // Implement your edit logic here
+          // For example:
+          // editRow(rowId);
+        }
+        // Reset the position of the row after the swipe
+        Animated.spring(pan, {
+          toValue: { x: 0, y: 0 },
+          useNativeDriver: false,
+        }).start();
+      },
+    })
+  ).current;
+
+  const animatedStyles = {
+    transform: [{ translateX: pan.x }],
+  };
+
   
   function calcSubTotal() {
-    const subTotal = (parsedPrice * parsedFrac).toFixed(2);
+    const subTotal = (parsedPrice).toFixed(2);
 
     return subTotal;
   }
 
   function addRow () {
-    if (foodName && price && fraction) {
-      setRows([...rows, {foodName, price, fraction, "id" : new Date().getTime()}]);
+    if (foodName && price) {
+      const formattedPrice = `$${price}`;
+      const newSize = 'large';
+      setRows([...rows, {foodName, price: formattedPrice, size: newSize, "id" : new Date().getTime()}]);
       const sub = calcSubTotal();
       setTotalCollect([...totalCollect, {sub}])
 
       setFoodName('');
       setPrice('');
-      setFraction('');
     }
   }
 
@@ -83,21 +115,7 @@ const Bill =() => {
           onChangeText={(p) => {setPrice(p)}}
         />
 
-        {/* Fraction input */}
-        <TextInput
-          style={styles.input}
-          placeholder="Fraction Consumed"
-          keyboardType='numeric'
-          value={fraction}
-          onChangeText={(frac) => {setFraction(frac)}}
-        />
 
-        <Text> {foodName} </Text>
-
-        <Text> {price} </Text>
-
-        <Text> {fraction} </Text>
-        
         <Button onPress={() => {
           addRow()
           console.log(totalCollect);
@@ -112,11 +130,10 @@ const Bill =() => {
         data={rows}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
-          <View style={styles.row}>
+          <Animated.View {...panResponder.panHandlers} style={[styles.row, animatedStyles]}>
             <Text>{item.foodName}</Text>
             <Text>{item.price}</Text>
-            <Text>{item.fraction}</Text>
-          </View>
+          </Animated.View>
         )}
       />
 
@@ -186,8 +203,8 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderWidth: 1,
     borderColor: 'lightgray',
-    padding: 10,
-    marginBottom: 5,
+    padding: 20,
+    marginBottom: 10,
   },
   h1: {
     textAlign: 'center',
