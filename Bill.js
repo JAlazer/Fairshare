@@ -1,61 +1,112 @@
 import React, { Component, useState } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, FlatList, StyleSheet, Pressable } from 'react-native';
+
 
 
 const Bill =() => {
   const [rows, setRows] = useState([]);
+
   const [foodName, setFoodName] = useState('');
-  const [price, setPrice] = useState('');
-  const [fraction, setFraction] = useState('');
+  const [price, setPrice] = useState(0.0);
+  const [fraction, setFraction] = useState(0.0);
 
-  const [percent, setPercent] = useState('');
+  const [percent, setPercent] = useState(0.0);
 
-  const [tax, setTax] = useState('');
+  const [tax, setTax] = useState(0.0);
 
-  let total = 69.69;   // TO-BE CHANGED ONCE CALCULATE BILL METHOD IS MADE
+  const [totalCollect, setTotalCollect] = useState([]);
 
-  const addRow = () => {
+  const [total, setTotal] = useState(0.0);
+
+  const parsedPrice = parseFloat(price);
+  const parsedFrac = parseFloat(fraction);
+  const parsedPercent = parseFloat(percent);
+  const parsedTax = parseFloat(tax);
+
+  function calcSubTotal() {
+    const subTotal = (parsedPrice * parsedFrac).toFixed(2);
+
+    return subTotal;
+  }
+
+  function addRow () {
     if (foodName && price && fraction) {
-      setRows([...rows, { foodName, price, fraction }]);
+      setRows([...rows, {foodName, price, fraction, "id" : new Date().getTime()}]);
+      const sub = calcSubTotal();
+      setTotalCollect([...totalCollect, {sub}])
+
       setFoodName('');
       setPrice('');
       setFraction('');
     }
-  };
+  }
+
+  function calcTotal() {
+    let sumPrice = totalCollect.reduce(
+      (element, currentValue) => element + currentValue, 0);
+    
+    sumPrice *= parsedPercent;
+
+    return sumPrice += parsedTax;
+  }
+
 
   return (
     
     <View style={styles.container}>
+
         {/* HEADING FOR NEW BILL */}
-        <h1 style={styles.h1}>New Bill</h1>
+        <Text style={styles.h1}>New Bill</Text>
 
         {/* INPUT GRID */}
-      <View style={styles.inputRow}>    
+      <View style={styles.inputRow}>   
+
+        {/* Food Input */}
         <TextInput
           style={styles.input}
-          placeholder="Food Item"
+          keyboardType="default"
+          placeholder="Enter food"
           value={foodName}
-          onChangeText={(text) => setFoodName(text)}
+          onChangeText={(food) => {setFoodName(food)}}
         />
+
+        {/* Price input */}
         <TextInput
           style={styles.input}
-          placeholder="Price in $"
+          placeholder="Total Price in $"
+          keyboardType='numeric'
           value={price}
-          onChangeText={(text) => setPrice(text)}
+          onChangeText={(p) => {setPrice(p)}}
         />
+
+        {/* Fraction input */}
         <TextInput
           style={styles.input}
           placeholder="Fraction Consumed"
+          keyboardType='numeric'
           value={fraction}
-          onChangeText={(text) => setFraction(text)}
+          onChangeText={(frac) => {setFraction(frac)}}
         />
-        <Button title="Add" onPress={addRow} />
+
+        <Text> {foodName} </Text>
+
+        <Text> {price} </Text>
+
+        <Text> {fraction} </Text>
+        
+        <Button onPress={() => {
+          addRow()
+          console.log(totalCollect);
+          
+        }}
+                title="Add"/>
       </View>
+      
 
       {/* VIEW ONCE INFO IS ENTERED INTO EACH ROW */}
       <FlatList
         data={rows}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={item => item.id}
         renderItem={({ item }) => (
           <View style={styles.row}>
             <Text>{item.foodName}</Text>
@@ -65,6 +116,7 @@ const Bill =() => {
         )}
       />
 
+      
       {/* ENTERING PERCENTAGE TIP */}
       <View>
         <Text style={styles.label}>Enter Percentage of tip</Text>
@@ -86,7 +138,7 @@ const Bill =() => {
         />
       </View>
 
-      {/* TODO: CALCULATION OF TOTAL IN SPERATE METHOD PERHAPS */}
+      {/* TODO: Create Button to press that gives calculated total! Pray the function works */}
       <View>
         <Text
             style={styles.label}>
@@ -129,11 +181,11 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   h1: {
-    textAlign: 'center'
+    textAlign: 'center',
+    fontSize: 64
   }
 }
 );
 
 export default Bill;
-
 
