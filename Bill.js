@@ -23,6 +23,7 @@ const Bill =() => {
   const parsedPercent = parseFloat(percent);
   const parsedTax = parseFloat(tax);
 
+  
   function calcSubTotal() {
     const subTotal = (parsedPrice * parsedFrac).toFixed(2);
 
