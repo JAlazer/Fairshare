@@ -1,15 +1,36 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import Bill from './Bill';
+
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import "react-native-gesture-handler";
+import WelcomeScreen from "./screens/WelcomeScreen";
+import FormScreen from "./screens/FormScreen";
+
+const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Bill />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator intialRouteName="WelcomeScreen">
+        {/*change headerShown to false to remove top of screen*/}
+        <Stack.Screen
+          name="WelcomeScreen"
+          component={WelcomeScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="FormScreen"
+          component={FormScreen}
+          options={{ headerShown: false }}
+        />
+      <Stack.Screen
+          name="BillScreen"
+          component={Bill}
+          options={{ headerShown: false }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
