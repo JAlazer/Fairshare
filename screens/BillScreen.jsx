@@ -1,9 +1,12 @@
 import React, { Component, useState } from 'react';
 import { View, Text, TextInput, Button, FlatList, StyleSheet, Pressable } from 'react-native';
-
+import NextScreenBtn from "../components/NextScreenBtn";
+import { useNavigation } from "@react-navigation/native";
 
 
 const Bill =() => {
+  const navigation = useNavigation();
+
   const [rows, setRows] = useState([]);
 
   const [foodName, setFoodName] = useState('');
@@ -147,6 +150,11 @@ const Bill =() => {
         </Text>
       </View>
 
+      <NextScreenBtn
+        navigation={navigation}
+        targetScreen="FoodSplitScreen"
+        btnText="Split"
+      />
     </View> 
   );
 }

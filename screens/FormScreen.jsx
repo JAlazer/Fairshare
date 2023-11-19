@@ -2,9 +2,12 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, TextInput, Pressable } from "react-native";
 import React, { useState } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
+import { useNavigation } from "@react-navigation/native";
+import NextScreenBtn from "../components/NextScreenBtn";
 
 
 const FormScreen = () => {
+  const navigation = useNavigation();
   const createButtons = () => {
     const buttons = [];
     for (let i = 0; i < value; i++) {
@@ -47,7 +50,11 @@ const FormScreen = () => {
         />
       </View>
       <View style={styles.view2}>{createButtons()}</View>
-      <StatusBar style="auto" />
+      <NextScreenBtn
+        navigation={navigation}
+        targetScreen="BillScreen"
+        btnText="Next"
+      />
     </View>
   );
 };
