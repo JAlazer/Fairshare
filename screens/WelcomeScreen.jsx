@@ -11,7 +11,7 @@ const WelcomeScreen = () => {
       <Visual/>
       <NextScreenBtn
         navigation={navigation}
-        targetScreen="FormScreen"
+        targetScreen="FoodSplitScreen"
         btnText="Create New Bill"
       />
     </View>
