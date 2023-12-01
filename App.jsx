@@ -6,10 +6,12 @@ import WelcomeScreen from "./screens/WelcomeScreen";
 import FormScreen from "./screens/FormScreen";
 import FoodSplitScreen from "./screens/FoodSplitScreen"
 import BillScreen from "./screens/BillScreen"
+import * as eva from '@eva-design/eva';
+import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
 
 const Stack = createStackNavigator();
 
-export default function App() {
+const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator intialRouteName="WelcomeScreen">
@@ -27,13 +29,20 @@ export default function App() {
         <Stack.Screen
           name="FoodSplitScreen"
           component={FoodSplitScreen}
+          options={{headerShown: false}}
         />
       <Stack.Screen
           name="BillScreen"
           component={BillScreen}
-          options={{ headerShown: true }}
+          options={{ headerShown: false }}
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
+export default () => (
+  <ApplicationProvider {...eva} theme={eva.light}>
+    <App />
+  </ApplicationProvider>
+);
