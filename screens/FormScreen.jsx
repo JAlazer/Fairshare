@@ -4,22 +4,13 @@ import React, { useState } from "react";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useNavigation } from "@react-navigation/native";
 import NextScreenBtn from "../components/NextScreenBtn";
+import { Input } from '@ui-kitten/components';
 
 
 const FormScreen = () => {
   const navigation = useNavigation();
-  const createButtons = () => {
-    const buttons = [];
-    for (let i = 0; i < value; i++) {
-      buttons.push(
-        <Pressable style={styles.button} key={i}>
-          <Text style={styles.text}>Person {i + 1}</Text>
-        </Pressable>
-      );
-    }
-    return buttons;
-  };
 
+  const [inputValues, setInputValues] = useState([]);
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(null);
   const [items, setItems] = useState([
@@ -35,8 +26,24 @@ const FormScreen = () => {
     { label: 10, value: 10 },
   ]);
 
+  const createInput = () => {
+    const inputs = [];
+    for (let i = 0; i < value; i++) {
+      inputs.push(
+          <Input key={i} size="large" placeholder={`Person ${i+1}`} value={inputValues[i] || ''} onChangeText={(nextValue) => handleInputChange(nextValue, i)}/>
+      );
+    }
+    return inputs;
+  };
+
+  const handleInputChange = (nextValue, index) => {
+    const updatedValues = [...inputValues];
+    updatedValues[index] = nextValue;
+    setInputValues(updatedValues);
+  };
+
   return (
-    <View style={{ justifyContent: "space-evenly", alignItems: "center" }}>
+    <View style={{ flex: 1, alignItems: "center" , justifyContent: 'space-between', backgroundColor: "white",}}>
       <View style={styles.view1}>
         <Text>How many people?</Text>
         <DropDownPicker
@@ -47,14 +54,21 @@ const FormScreen = () => {
           setOpen={setOpen}
           setValue={setValue}
           setItems={setItems}
+          maxHeight={200}
         />
       </View>
-      <View style={styles.view2}>{createButtons()}</View>
+
+      <View style={styles.view2}>
+        {createInput()}
+      </View>
+
       <NextScreenBtn
         navigation={navigation}
         targetScreen="BillScreen"
         btnText="Next"
       />
+
+
     </View>
   );
 };
@@ -63,34 +77,26 @@ const styles = StyleSheet.create({
   view1: {
     alignItems: "center",
     justifyContent: "flex-start",
-    paddingTop: "20%",
-    marginBottom: "10%",
-    width: "51.2%",
+    marginTop: '10%',
+    width: 200,
+    zIndex: 10,
+  },
+  dropdown: {
+    width: 200,
+    height: 10,
   },
   view2: {
-    flexWrap: "wrap",
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    alignItems: "stretch",
-    marginTop: "50%",
-  },
-  button: {
-    backgroundColor: "#00008B",
-    justifyContent: "center",
-    alignItems: "center",
-    height: 40,
-    width: 100,
-    marginBottom: "10%",
-    borderRadius: "10px",
+    flex: 1,
+    flexDirection: "column",
+    width: '60%',
+    maxHeight: '10%',
+    marginTop: '-90%',
   },
   text: {
     fontSize: 16,
     lineHeight: 21,
     letterSpacing: 0.25,
     color: "white",
-  },
-  dropdown: {
-    width: 200,
   },
 });
 

@@ -1,28 +1,20 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
-import DropDownPicker from 'react-native-dropdown-picker';
+import NextScreenBtn from '../components/NextScreenBtn';
+import Dropdown from '../components/Dropdown'
+import { useNavigation } from "@react-navigation/native";
 
 const FoodSplitScreen = () => {
-  const [open, setOpen] = useState(false);
-  const foodNamePrice = [["Matt's Mac and Cheese $500"], ["Matt's WAP $10000000"]]; // Corrected the data structure
-
-  // Transform the foodNamePrice array into an array of objects with label and value properties
-  const dropdownItems = foodNamePrice.map((item, index) => ({
-    label: item[0],
-    value: index,
-  }));
-
+  const navigation = useNavigation();
   return (
     <View style={styles.view1}>
-      <Text>You Ate?</Text>
-      <DropDownPicker
-        style={styles.dropdown}
-        open={open}
-        value={null} // Set the initial value to null
-        items={dropdownItems}
-        setOpen={setOpen}
-        placeholder={()=>{}}
-      />
+      <View style={styles.dropdown}>
+        <Dropdown/>
+      </View>
+
+        <NextScreenBtn btnText={'Submit'} targetScreen={"SummaryScreen"} navigation={navigation}/>
+   
+      
     </View>
   );
 };
@@ -30,9 +22,12 @@ const FoodSplitScreen = () => {
 const styles = StyleSheet.create({
   view1: {
     marginTop: 100,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   dropdown: {
-    width: 200,
+    width: '80%',
   },
 });
 
