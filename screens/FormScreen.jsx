@@ -1,11 +1,9 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, TextInput, Pressable } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, Button } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useNavigation } from "@react-navigation/native";
-import NextScreenBtn from "../components/NextScreenBtn";
 import { Input } from '@ui-kitten/components';
-
+import NextScreenBtn from "../components/NextScreenBtn";
 
 const FormScreen = () => {
   const navigation = useNavigation();
@@ -26,11 +24,26 @@ const FormScreen = () => {
     { label: 10, value: 10 },
   ]);
 
+  useEffect(() => {
+    if (value !== null) {
+      const defaultInputValues = Array(value)
+        .fill('')
+        .map((_, index) => `Person ${index + 1}`);
+      setInputValues(defaultInputValues);
+    }
+  }, [value]);
+
   const createInput = () => {
     const inputs = [];
     for (let i = 0; i < value; i++) {
       inputs.push(
-          <Input key={i} size="large" placeholder={`Person ${i+1}`} value={inputValues[i] || ''} onChangeText={(nextValue) => handleInputChange(nextValue, i)}/>
+        <Input
+          key={i}
+          size="large"
+          placeholder={`Person ${i + 1}`}
+          value={inputValues[i] || ''}
+          onChangeText={(nextValue) => handleInputChange(nextValue, i)}
+        />
       );
     }
     return inputs;
@@ -42,8 +55,12 @@ const FormScreen = () => {
     setInputValues(updatedValues);
   };
 
+  const handleDropDownChange = (selectedValue) => {
+    setValue(selectedValue);
+  };
+
   return (
-    <View style={{ flex: 1, alignItems: "center" , justifyContent: 'space-between', backgroundColor: "white",}}>
+    <View style={{ flex: 1, alignItems: "center", justifyContent: 'space-between', backgroundColor: "white" }}>
       <View style={styles.view1}>
         <Text>How many people?</Text>
         <DropDownPicker
@@ -52,7 +69,7 @@ const FormScreen = () => {
           value={value}
           items={items}
           setOpen={setOpen}
-          setValue={setValue}
+          setValue={handleDropDownChange}
           setItems={setItems}
           maxHeight={200}
         />
@@ -62,13 +79,7 @@ const FormScreen = () => {
         {createInput()}
       </View>
 
-      <NextScreenBtn
-        navigation={navigation}
-        targetScreen="BillScreen"
-        btnText="Next"
-      />
-
-
+      <NextScreenBtn btnText="Next" targetScreen="BillScreen" navigation={navigation} params={inputValues}/>
     </View>
   );
 };
@@ -91,12 +102,6 @@ const styles = StyleSheet.create({
     width: '60%',
     maxHeight: '10%',
     marginTop: '-90%',
-  },
-  text: {
-    fontSize: 16,
-    lineHeight: 21,
-    letterSpacing: 0.25,
-    color: "white",
   },
 });
 
