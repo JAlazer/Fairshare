@@ -9,12 +9,15 @@ const Bill =({route}) => {
   const peopleList = route.params.params;
   const foodList = [];
   const priceList = [];
+  let percent1 = 0;
+  let taxTotal = 0;
 
   const [rows, setRows] = useState([]);
   const [foodName, setFoodName] = useState('');
   const [price, setPrice] = useState(0.0);
   const [percent, setPercent] = useState(0);
   const [tax, setTax] = useState(0.0);
+  const [work, setWork] = useState(false);
 
   const [subTotal, setSubTotal] = useState(0);
   const [total, setTotal] = useState(0.0);
@@ -67,10 +70,27 @@ const Bill =({route}) => {
   }
   useEffect(() => {
     rows.forEach((val)=>{
-      foodList.push(`${val.foodName} ${val.price}`)
       priceList.push(parseFloat((val.price).substr(1)))
     });
+    if (priceList.length > 0) {
+      setSubTotal(priceList.reduce((prev, curr) => prev + curr));
+    }
   }, [rows]);
+  
+  useEffect(()=>{
+    percent1 = parseFloat(`${percent}`)/100
+    taxTotal = parseFloat(tax) + parseFloat(subTotal)
+    setTotal((percent1 * taxTotal) + taxTotal)
+  }, [tax, percent])
+
+  useEffect(()=> {
+    if (work) {
+      rows.forEach((val)=>{
+        foodList.push(`${val.foodName} ${val.price}`)
+      });
+      navigation.navigate(`FoodSplitScreen`, {peopleList: peopleList, foodList: foodList, total: total} )
+    }
+  }, [work])
   
 
 
@@ -144,14 +164,7 @@ const Bill =({route}) => {
       </View>
       <View style={styles.button1}>
         <Button className="btn btn-next" type="button" title={"Split"} onPress={ () => {
-          navigation.navigate(`FoodSplitScreen`, {peopleList: peopleList, foodList: foodList, total: total} )
-          if (priceList.length > 0) {
-            let newSubTotal = priceList.reduce((prev, curr) => prev + curr);
-            setSubTotal(newSubTotal);
-          }
-          let percent1 = parseFloat(`1.${percent}`)
-          let taxTotal = parseFloat(tax) + parseFloat(subTotal)
-          setTotal((percent1 * taxTotal) + subTotal)
+          setWork(true);
           }} color="white"/>
       </View>
     </View> 
