@@ -7,12 +7,13 @@ import { useNavigation } from "@react-navigation/native";
 const FoodSplitScreen = ({route}) => {
   const navigation = useNavigation();
   const {peopleList, foodList, total} = route.params;
+  console.log(route.params)
   return (
     <View style={styles.view1}>
       <View style={styles.dropdown}>
         <Dropdown people={peopleList} food={foodList}/>
       </View>
-        <NextScreenBtn btnText='Submit' targetScreen="SummaryScreen" navigation={navigation}/>
+        <NextScreenBtn btnText='Submit' targetScreen="SummaryScreen" navigation={navigation} params={total}/>
     </View>
   );
 };

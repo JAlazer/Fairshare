@@ -5,7 +5,9 @@ const SummaryScreen = ({route}) => {
     console.log(route.params)
 
     return (
-        <View><Text>{total}</Text></View>
+        <View style={{marginTop: 10, backgroundColor: 'red', height: '100%'}}>
+            <Text style={{color: 'white', fontSize: 100}}>{total}</Text>
+        </View>
     );
 }
 
