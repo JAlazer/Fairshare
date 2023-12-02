@@ -6,6 +6,7 @@ import WelcomeScreen from "./screens/WelcomeScreen";
 import FormScreen from "./screens/FormScreen";
 import FoodSplitScreen from "./screens/FoodSplitScreen"
 import BillScreen from "./screens/BillScreen"
+import SummaryScreen from './screens/SummaryScreen'
 import * as eva from '@eva-design/eva';
 import { ApplicationProvider, Layout, Text } from '@ui-kitten/components';
 
@@ -34,6 +35,11 @@ const App = () => {
       <Stack.Screen
           name="BillScreen"
           component={BillScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="SummaryScreen"
+          component={SummaryScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

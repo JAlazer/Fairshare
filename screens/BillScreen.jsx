@@ -1,58 +1,77 @@
-import React, { Component, useState } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet, Pressable } from 'react-native';
+import React, { Component, useState, useRef, useEffect } from 'react';
+import { View, Text, TextInput, Button, FlatList, StyleSheet, Pressable, PanResponder, Animated, TouchableOpacity } from 'react-native';
 import NextScreenBtn from "../components/NextScreenBtn";
 import { useNavigation } from "@react-navigation/native";
 
 
-const Bill =() => {
+const Bill =({route}) => {
   const navigation = useNavigation();
+  const peopleList = route.params.params;
+  const foodList = [];
+  const priceList = [];
 
   const [rows, setRows] = useState([]);
-
   const [foodName, setFoodName] = useState('');
   const [price, setPrice] = useState(0.0);
-  const [fraction, setFraction] = useState(0.0);
-
-  const [percent, setPercent] = useState(0.0);
-
+  const [percent, setPercent] = useState(0);
   const [tax, setTax] = useState(0.0);
 
-  const [totalCollect, setTotalCollect] = useState([]);
-
+  const [subTotal, setSubTotal] = useState(0);
   const [total, setTotal] = useState(0.0);
 
-  const parsedPrice = parseFloat(price);
-  const parsedFrac = parseFloat(fraction);
-  const parsedPercent = parseFloat(percent);
-  const parsedTax = parseFloat(tax);
+  const pan = useRef(new Animated.ValueXY()).current;
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponderCapture: () => true,
+      onPanResponderMove: (_, gesture) => {
+        pan.setValue({ x: gesture.dx, y: gesture.dy });
+      },
+      onPanResponderRelease: (_, gesture) => {
+        if (gesture.dx > 100) {
+          // Swiped right (delete action)
+          // Implement your delete logic here
+          // For example:
+          // deleteRow(rowId);
+        } else if (gesture.dx < -100) {
+          // Swiped left (edit action)
+          // Implement your edit logic here
+          // For example:
+          // editRow(rowId);
+        }
+        // Reset the position of the row after the swipe
+        Animated.spring(pan, {
+          toValue: { x: 0, y: 0 },
+          useNativeDriver: false,
+        }).start();
+      },
+    })
+  ).current;
+
+  const animatedStyles = {
+    transform: [{ translateX: pan.x }],
+  };
 
   
-  function calcSubTotal() {
-    const subTotal = (parsedPrice * parsedFrac).toFixed(2);
 
-    return subTotal;
-  }
-
-  function addRow () {
-    if (foodName && price && fraction) {
-      setRows([...rows, {foodName, price, fraction, "id" : new Date().getTime()}]);
-      const sub = calcSubTotal();
-      setTotalCollect([...totalCollect, {sub}])
-
+  function addRow() {
+    if (foodName && price) {
+      const formattedPrice = `$${price}`;
+      const newSize = 'large';
+      
+      const newRow = { foodName, price: formattedPrice, size: newSize, "id": rows.length };
+      setRows([...rows, newRow]);
       setFoodName('');
       setPrice('');
-      setFraction('');
+
     }
   }
-
-  function calcTotal() {
-    let sumPrice = totalCollect.reduce(
-      (element, currentValue) => element + currentValue, 0);
-    
-    sumPrice *= parsedPercent;
-
-    return sumPrice += parsedTax;
-  }
+  useEffect(() => {
+    rows.forEach((val)=>{
+      foodList.push(`${val.foodName} ${val.price}`)
+      priceList.push(parseFloat((val.price).substr(1)))
+    });
+  }, [rows]);
+  
 
 
   return (
@@ -83,27 +102,13 @@ const Bill =() => {
           onChangeText={(p) => {setPrice(p)}}
         />
 
-        {/* Fraction input */}
-        <TextInput
-          style={styles.input}
-          placeholder="Fraction Consumed"
-          keyboardType='numeric'
-          value={fraction}
-          onChangeText={(frac) => {setFraction(frac)}}
-        />
-
-        <Text> {foodName} </Text>
-
-        <Text> {price} </Text>
-
-        <Text> {fraction} </Text>
-        
-        <Button onPress={() => {
+        <View style={styles.button}>
+        <Button color={'white'} onPress={() => {
           addRow()
-          console.log(totalCollect);
-          
         }}
-                title="Add"/>
+          title="Add"/>
+          </View>
+        
       </View>
       
 
@@ -112,49 +117,43 @@ const Bill =() => {
         data={rows}
         keyExtractor={item => item.id}
         renderItem={({ item }) => (
-          <View style={styles.row}>
+          <Animated.View {...panResponder.panHandlers} style={[styles.row, animatedStyles]}>
             <Text>{item.foodName}</Text>
             <Text>{item.price}</Text>
-            <Text>{item.fraction}</Text>
-          </View>
+          </Animated.View>
         )}
       />
 
       
       {/* ENTERING PERCENTAGE TIP */}
-      <View>
-        <Text style={styles.label}>Enter Percentage of tip</Text>
+      <View style={{flex: 1, justifyContent: 'space-between', alignItems: 'flex-end',flexDirection: 'row', marginBottom: 20}}>
         <TextInput
-            style={styles.input}
-            placeholder="Type your percent here:"
+            style={{borderColor: 'black', width: '45%', borderWidth: 1, height: '20%', padding:10 }} 
+            placeholder="Tip percent:"
             value={percent}
+            keyboardType='numeric'
             onChangeText={(percent) => setPercent(percent)}
         />
-      </View>
-
-      {/* ENTERING TAX! */}
-      <View>
-        <TextInput 
-            style={styles.input}
+        <TextInput
+            style={{borderColor: 'black', borderWidth: 1, width: '45%', height: '20%', padding: 10 }} 
             placeholder="Enter tax:"
             value={tax}
+            keyboardType='numeric'
             onChangeText={(tax) => setTax(tax)}
         />
       </View>
-
-      {/* TODO: Create Button to press that gives calculated total! Pray the function works */}
-      <View>
-        <Text
-            style={styles.label}>
-                Your total is: ${total}
-        </Text>
+      <View style={styles.button1}>
+        <Button className="btn btn-next" type="button" title={"Split"} onPress={ () => {
+          navigation.navigate(`FoodSplitScreen`, {peopleList: peopleList, foodList: foodList, total: total} )
+          if (priceList.length > 0) {
+            let newSubTotal = priceList.reduce((prev, curr) => prev + curr);
+            setSubTotal(newSubTotal);
+          }
+          let percent1 = parseFloat(`1.${percent}`)
+          let taxTotal = parseFloat(tax) + parseFloat(subTotal)
+          setTotal((percent1 * taxTotal) + subTotal)
+          }} color="white"/>
       </View>
-
-      <NextScreenBtn
-        navigation={navigation}
-        targetScreen="FoodSplitScreen"
-        btnText="Split"
-      />
     </View> 
   );
 }
@@ -163,11 +162,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
+    marginTop: 5,
+    backgroundColor: 'white',
   },
   label: {
     fontSize: 18,
     marginBottom: 10,
-
   },
   inputRow: {
     flexDirection: 'row',
@@ -186,15 +186,27 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     borderWidth: 1,
     borderColor: 'lightgray',
-    padding: 10,
-    marginBottom: 5,
+    padding: 20,
+    marginBottom: 10,
   },
   h1: {
     textAlign: 'center',
     fontSize: 64
-  }
+  },
+  button: {
+    backgroundColor: '#00008B',
+    borderRadius: 3,
+  },
+  button1: {
+    backgroundColor: '#00008B',
+    justifyContent: 'center',
+    height: "10%",
+    width: "80%",
+    marginBottom: "10%",
+    borderRadius: "10px",
+    alignSelf: 'center'
+  },
 }
 );
 
 export default Bill;
-
