@@ -1,19 +1,29 @@
-import React, { Component, useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet, Pressable, PanResponder, Animated, TouchableOpacity } from 'react-native';
+import React, { Component, useState, useRef, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  FlatList,
+  StyleSheet,
+  Pressable,
+  PanResponder,
+  Animated,
+  TouchableOpacity,
+} from "react-native";
 import NextScreenBtn from "../components/NextScreenBtn";
 import { useNavigation } from "@react-navigation/native";
 
-
-const Bill =({route}) => {
+const Bill = ({ route }) => {
   const navigation = useNavigation();
   const peopleList = route.params.params;
   const foodList = [];
-  const priceList = [];
+  let priceList = [];
   let percent1 = 0;
   let taxTotal = 0;
 
   const [rows, setRows] = useState([]);
-  const [foodName, setFoodName] = useState('');
+  const [foodName, setFoodName] = useState("");
   const [price, setPrice] = useState(0.0);
   const [percent, setPercent] = useState(0);
   const [tax, setTax] = useState(0.0);
@@ -54,172 +64,209 @@ const Bill =({route}) => {
     transform: [{ translateX: pan.x }],
   };
 
-  
-
   function addRow() {
     if (foodName && price) {
       const formattedPrice = `$${price}`;
-      const newSize = 'large';
-      
-      const newRow = { foodName, price: formattedPrice, size: newSize, "id": rows.length };
-      setRows([...rows, newRow]);
-      setFoodName('');
-      setPrice('');
+      const newSize = "large";
 
+      const newRow = {
+        foodName,
+        price: formattedPrice,
+        size: newSize,
+        id: rows.length,
+      };
+      setRows([...rows, newRow]);
+      setFoodName("");
+      setPrice("");
     }
   }
   useEffect(() => {
-    rows.forEach((val)=>{
-      priceList.push(parseFloat((val.price).substr(1)))
+    rows.forEach((val) => {
+      priceList.push(parseFloat(val.price.substr(1)));
     });
     if (priceList.length > 0) {
       setSubTotal(priceList.reduce((prev, curr) => prev + curr));
     }
   }, [rows]);
-  
-  useEffect(()=>{
-    percent1 = parseFloat(`${percent}`)/100
-    taxTotal = parseFloat(tax) + parseFloat(subTotal)
-    setTotal((percent1 * taxTotal) + taxTotal)
-  }, [tax, percent])
 
-  useEffect(()=> {
+  useEffect(() => {
+    percent1 = parseFloat(`${percent}`) / 100;
+    taxTotal = parseFloat(tax) + parseFloat(subTotal);
+    setTotal(percent1 * taxTotal + taxTotal);
+  }, [tax, percent]);
+
+  useEffect(() => {
     if (work) {
-      rows.forEach((val)=>{
-        foodList.push(`${val.foodName} ${val.price}`)
+      priceList = [];
+      rows.forEach((val) => {
+        foodList.push(`${val.foodName} ${val.price}`);
+        priceList.push(parseFloat(val.price.substr(1)));
       });
-      navigation.navigate(`FoodSplitScreen`, {peopleList: peopleList, foodList: foodList, total: total} )
+      console.log(priceList);
+      navigation.navigate(`FoodSplitScreen`, {
+        peopleList: peopleList,
+        foodList: foodList,
+        total: total,
+        priceList: priceList,
+      });
     }
-  }, [work])
-  
-
+  }, [work]);
 
   return (
-    
     <View style={styles.container}>
+      {/* HEADING FOR NEW BILL */}
+      <Text style={styles.h1}>New Bill</Text>
 
-        {/* HEADING FOR NEW BILL */}
-        <Text style={styles.h1}>New Bill</Text>
-
-        {/* INPUT GRID */}
-      <View style={styles.inputRow}>   
-
+      {/* INPUT GRID */}
+      <View style={styles.inputRow}>
         {/* Food Input */}
         <TextInput
           style={styles.input}
           keyboardType="default"
           placeholder="Enter food"
           value={foodName}
-          onChangeText={(food) => {setFoodName(food)}}
+          onChangeText={(food) => {
+            setFoodName(food);
+          }}
         />
 
         {/* Price input */}
         <TextInput
           style={styles.input}
           placeholder="Total Price in $"
-          keyboardType='numeric'
+          keyboardType="numeric"
           value={price}
-          onChangeText={(p) => {setPrice(p)}}
+          onChangeText={(p) => {
+            setPrice(p);
+          }}
         />
 
         <View style={styles.button}>
-        <Button color={'white'} onPress={() => {
-          addRow()
-        }}
-          title="Add"/>
-          </View>
-        
+          <Button
+            color={"white"}
+            onPress={() => {
+              addRow();
+            }}
+            title="Add"
+          />
+        </View>
       </View>
-      
 
       {/* VIEW ONCE INFO IS ENTERED INTO EACH ROW */}
       <FlatList
         data={rows}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <Animated.View {...panResponder.panHandlers} style={[styles.row, animatedStyles]}>
+          <Animated.View
+            {...panResponder.panHandlers}
+            style={[styles.row, animatedStyles]}
+          >
             <Text>{item.foodName}</Text>
             <Text>{item.price}</Text>
           </Animated.View>
         )}
       />
 
-      
       {/* ENTERING PERCENTAGE TIP */}
-      <View style={{flex: 1, justifyContent: 'space-between', alignItems: 'flex-end',flexDirection: 'row', marginBottom: 20}}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          flexDirection: "row",
+          marginBottom: 20,
+        }}
+      >
         <TextInput
-            style={{borderColor: 'black', width: '45%', borderWidth: 1, height: '20%', padding:10 }} 
-            placeholder="Tip percent:"
-            value={percent}
-            keyboardType='numeric'
-            onChangeText={(percent) => setPercent(percent)}
+          style={{
+            borderColor: "black",
+            width: "45%",
+            borderWidth: 1,
+            height: "20%",
+            padding: 10,
+          }}
+          placeholder="Tip percent:"
+          value={percent}
+          keyboardType="numeric"
+          onChangeText={(percent) => setPercent(percent)}
         />
         <TextInput
-            style={{borderColor: 'black', borderWidth: 1, width: '45%', height: '20%', padding: 10 }} 
-            placeholder="Enter tax:"
-            value={tax}
-            keyboardType='numeric'
-            onChangeText={(tax) => setTax(tax)}
+          style={{
+            borderColor: "black",
+            borderWidth: 1,
+            width: "45%",
+            height: "20%",
+            padding: 10,
+          }}
+          placeholder="Enter tax:"
+          value={tax}
+          keyboardType="numeric"
+          onChangeText={(tax) => setTax(tax)}
         />
       </View>
       <View style={styles.button1}>
-        <Button className="btn btn-next" type="button" title={"Split"} onPress={ () => {
-          setWork(true);
-          }} color="white"/>
+        <Button
+          className="btn btn-next"
+          type="button"
+          title={"Split"}
+          onPress={() => {
+            setWork(true);
+          }}
+          color="white"
+        />
       </View>
-    </View> 
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
     marginTop: 5,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   label: {
     fontSize: 18,
     marginBottom: 10,
   },
   inputRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 10,
   },
   input: {
     flex: 1,
     marginRight: 10,
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: "gray",
     padding: 10,
   },
   row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     borderWidth: 1,
-    borderColor: 'lightgray',
+    borderColor: "lightgray",
     padding: 20,
     marginBottom: 10,
   },
   h1: {
-    textAlign: 'center',
-    fontSize: 64
+    textAlign: "center",
+    fontSize: 64,
   },
   button: {
-    backgroundColor: '#00008B',
+    backgroundColor: "#00008B",
     borderRadius: 3,
   },
   button1: {
-    backgroundColor: '#00008B',
-    justifyContent: 'center',
+    backgroundColor: "#00008B",
+    justifyContent: "center",
     height: "10%",
     width: "80%",
     marginBottom: "10%",
     borderRadius: "10px",
-    alignSelf: 'center'
+    alignSelf: "center",
   },
-}
-);
+});
 
 export default Bill;
