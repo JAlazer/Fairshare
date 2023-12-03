@@ -93,8 +93,10 @@ const Bill = ({ route }) => {
 
   useEffect(() => {
     percent1 = parseFloat(`${percent}`) / 100;
+    console.log(percent1)
     taxTotal = parseFloat(tax) + parseFloat(subTotal);
-    setTotal(percent1 * subTotal + taxTotal);
+    console.log(taxTotal)
+    setTotal((percent1 * subTotal) + taxTotal);
   }, [tax, percent]);
 
   useEffect(() => {
@@ -105,6 +107,7 @@ const Bill = ({ route }) => {
         priceList.push(parseFloat(val.price.substr(1)));
       });
       console.log(priceList);
+      console.log(total)
       navigation.navigate(`FoodSplitScreen`, {
         peopleList: peopleList,
         foodList: foodList,
