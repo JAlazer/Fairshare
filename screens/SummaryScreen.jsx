@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Card, Spinner } from '@ui-kitten/components';
+import React, { useState, useEffect } from "react";
+import { View, ScrollView, Text, StyleSheet } from "react-native";
+import { Card, Spinner } from "@ui-kitten/components";
 
 const SummaryScreen = ({ route }) => {
   const { total, peopleList, array2d, priceList } = route.params.params;
@@ -35,9 +35,9 @@ const SummaryScreen = ({ route }) => {
         let currentDues = duesMap.get(peopleList[k]);
         currentDues += (currentDues / totalNoTipNoTax) * tipAndTax;
 
-        currentDues = Math.ceil(currentDues * 100) / 100;
+        currentDues = Math.round(currentDues * 100) / 100;
 
-        duesMap.set(peopleList[k], currentDues);
+        duesMap.set(peopleList[k], currentDues.toFixed(2));
       }
 
       return Array.from(duesMap);
@@ -46,31 +46,37 @@ const SummaryScreen = ({ route }) => {
     const timeoutId = setTimeout(() => {
       setVisible(false);
       setDuesData(calculateDues());
-    }, 7000);
+    }, 3000);
 
     return () => clearTimeout(timeoutId); // Clear timeout on unmount
   }, [total, peopleList, array2d, priceList]);
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <Text style={styles.header}>Your Share:</Text>
       {isVisible && (
         <View style={styles.spinnerContainer}>
-        <Text style={{marginBottom: 100, fontSize:24, fontWeight: '300'}}>Calculating your Fair Share</Text>
+          <Text style={{ marginBottom: 100, fontSize: 24, fontWeight: "300" }}>
+            Calculating your Fair Share
+          </Text>
           <Spinner size="giant" />
-          <Text style={{marginTop: 100, fontFamily: 'Didot'}}>"Never pay more than your fair share again"</Text>
+          <Text style={{ marginTop: 100, fontFamily: "Didot" }}>
+            "Never pay more than your fair share again"
+          </Text>
         </View>
       )}
-      {!isVisible &&
-        <View style={{marginTop: 60}}>
-            {duesData.map(([person, dues], index) => (
-            <Card key={index} style={{ flexDirection: 'row', }}>
-                <Text style={styles.personName}>{person}</Text>
-                <Text style={styles.duesAmount}>${dues}</Text>
+      {!isVisible && (
+        <View>
+          {duesData.map(([person, dues], index) => (
+            <Card key={index} style={{ flexDirection: "row" }}>
+              <Text style={styles.personName}>{person}</Text>
+              <Text style={styles.duesAmount}>${dues}</Text>
             </Card>
-            ))}
-        </View>}
-    </View>
+          ))}
+          <Text style={styles.total}>Total: ${total.toFixed(2)}</Text>
+        </View>
+      )}
+    </ScrollView>
   );
 };
 
@@ -78,30 +84,35 @@ const styles = StyleSheet.create({
   container: {
     paddingRight: 40,
     paddingLeft: 40,
-    height: '100%',
-    backgroundColor: 'white',
+    height: "100%",
+    backgroundColor: "white",
   },
   header: {
     marginTop: 40,
     fontSize: 36,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    fontFamily: 'Didot',
-    alignSelf: 'center',
+    fontFamily: "Didot",
+    alignSelf: "center",
   },
   personName: {
     fontSize: 24,
   },
   duesAmount: {
     fontSize: 16,
-    fontWeight: 'bold',
-    color: 'green',
+    fontWeight: "bold",
+    color: "green",
   },
   spinnerContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 200,
+  },
+  total: {
+    fontSize: 24,
+    marginTop: 10,
+    paddingBottom: 50,
   },
 });
 

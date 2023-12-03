@@ -93,10 +93,10 @@ const Bill = ({ route }) => {
 
   useEffect(() => {
     percent1 = parseFloat(`${percent}`) / 100;
-    console.log(percent1)
+    console.log(percent1);
     taxTotal = parseFloat(tax) + parseFloat(subTotal);
-    console.log(taxTotal)
-    setTotal((percent1 * subTotal) + taxTotal);
+    console.log(taxTotal);
+    setTotal(percent1 * subTotal + taxTotal);
   }, [tax, percent]);
 
   useEffect(() => {
@@ -107,7 +107,7 @@ const Bill = ({ route }) => {
         priceList.push(parseFloat(val.price.substr(1)));
       });
       console.log(priceList);
-      console.log(total)
+      console.log(total);
       navigation.navigate(`FoodSplitScreen`, {
         peopleList: peopleList,
         foodList: foodList,
@@ -122,8 +122,7 @@ const Bill = ({ route }) => {
       {/* HEADING FOR NEW BILL */}
       <Text style={styles.h1}>New Bill</Text>
 
-
-      <View style={{flex: 1, flexDirection: 'row', maxHeight: '15%'}}>
+      <View style={{ flex: 1, flexDirection: "row", maxHeight: "15%" }}>
         {/* INPUT GRID */}
         <View style={styles.inputRow}>
           <View style={styles.inputContainer}>
@@ -164,7 +163,7 @@ const Bill = ({ route }) => {
 
         <View style={styles.button}>
           <Button
-            color={'white'}
+            color={"white"}
             onPress={() => {
               addRow();
             }}
@@ -212,24 +211,25 @@ const styles = StyleSheet.create({
   },
   inputRow: {
     flex: 1,
-    flexDirection: 'column',
+    flexDirection: "column",
     marginBottom: 10,
-    width: '80%',
-    maxHeight: '80%',
-    marginRight: 10
+    width: "80%",
+    maxHeight: "80%",
+    marginRight: 10,
   },
   inputContainer: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginBottom: 10,
-    width: '100%',
+    width: "100%",
   },
   input: {
-    width: '48%', // Adjust this percentage as needed
+    width: "48%", // Adjust this percentage as needed
     borderWidth: 1,
     borderColor: "gray",
     padding: 10,
+    borderRadius: 5,
   },
   row: {
     flexDirection: "row",
@@ -238,28 +238,30 @@ const styles = StyleSheet.create({
     borderColor: "lightgray",
     padding: 20,
     marginBottom: 10,
+    borderRadius: 5,
   },
   h1: {
-    textAlign: 'center',
+    marginTop: 10,
+    textAlign: "center",
     fontSize: 64,
-    fontFamily: 'Didot',
+    fontFamily: "Didot",
   },
   button1: {
-    backgroundColor: '#00008B',
-    justifyContent: 'center',
-    height: '10%',
-    width: '80%',
-    marginBottom: '10%',
+    backgroundColor: "#00008B",
+    justifyContent: "center",
+    height: "10%",
+    width: "80%",
+    marginBottom: "10%",
     borderRadius: 10,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   button: {
-    backgroundColor: '#00008B',
-    borderRadius: 3,
+    backgroundColor: "#00008B",
+    borderRadius: 5,
     padding: 1,
-    fontFamily: 'Didot',
-    width: '20%',
-    height: '32%'
+    fontFamily: "Didot",
+    width: "20%",
+    height: "32%",
   },
 });
 

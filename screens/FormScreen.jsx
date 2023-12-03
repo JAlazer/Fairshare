@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { useNavigation } from "@react-navigation/native";
-import { Input } from '@ui-kitten/components';
+import { Input } from "@ui-kitten/components";
 import NextScreenBtn from "../components/NextScreenBtn";
 
 const FormScreen = () => {
@@ -27,7 +27,7 @@ const FormScreen = () => {
   useEffect(() => {
     if (value !== null) {
       const defaultInputValues = Array(value)
-        .fill('')
+        .fill("")
         .map((_, index) => `Person ${index + 1}`);
       setInputValues(defaultInputValues);
     }
@@ -41,7 +41,7 @@ const FormScreen = () => {
           key={i}
           size="large"
           placeholder={`Person ${i + 1}`}
-          value={inputValues[i] || ''}
+          value={inputValues[i] || ""}
           onChangeText={(nextValue) => handleInputChange(nextValue, i)}
         />
       );
@@ -60,7 +60,14 @@ const FormScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: 'space-between', backgroundColor: "white" }}>
+    <View
+      style={{
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "space-between",
+        backgroundColor: "white",
+      }}
+    >
       <View style={styles.view1}>
         <Text>How many people?</Text>
         <DropDownPicker
@@ -72,14 +79,18 @@ const FormScreen = () => {
           setValue={handleDropDownChange}
           setItems={setItems}
           maxHeight={200}
+          placeholder="Select a number"
         />
       </View>
 
-      <View style={styles.view2}>
-        {createInput()}
-      </View>
+      <View style={styles.view2}>{createInput()}</View>
 
-      <NextScreenBtn btnText="Next" targetScreen="BillScreen" navigation={navigation} params={inputValues}/>
+      <NextScreenBtn
+        btnText="Next"
+        targetScreen="BillScreen"
+        navigation={navigation}
+        params={inputValues}
+      />
     </View>
   );
 };
@@ -88,20 +99,21 @@ const styles = StyleSheet.create({
   view1: {
     alignItems: "center",
     justifyContent: "flex-start",
-    marginTop: '10%',
+    marginTop: "15%",
     width: 200,
     zIndex: 10,
   },
   dropdown: {
+    marginTop: 10,
     width: 200,
     height: 10,
   },
   view2: {
     flex: 1,
     flexDirection: "column",
-    width: '60%',
-    maxHeight: '10%',
-    marginTop: '-90%',
+    width: "60%",
+    maxHeight: "10%",
+    marginTop: "-90%",
   },
 });
 
