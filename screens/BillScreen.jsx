@@ -1,10 +1,9 @@
-import React, { Component, useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet, Pressable, PanResponder, Animated, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TextInput, Button, FlatList, StyleSheet, Animated, PanResponder } from 'react-native';
 import NextScreenBtn from "../components/NextScreenBtn";
 import { useNavigation } from "@react-navigation/native";
 
-
-const Bill =({route}) => {
+const Bill = ({ route }) => {
   const navigation = useNavigation();
   const peopleList = route.params.params;
   const foodList = [];
@@ -54,88 +53,100 @@ const Bill =({route}) => {
     transform: [{ translateX: pan.x }],
   };
 
-  
-
   function addRow() {
     if (foodName && price) {
       const formattedPrice = `$${price}`;
       const newSize = 'large';
-      
-      const newRow = { foodName, price: formattedPrice, size: newSize, "id": rows.length };
+
+      const newRow = { foodName, price: formattedPrice, size: newSize, id: rows.length };
       setRows([...rows, newRow]);
       setFoodName('');
       setPrice('');
-
     }
   }
+
   useEffect(() => {
-    rows.forEach((val)=>{
-      priceList.push(parseFloat((val.price).substr(1)))
+    rows.forEach((val) => {
+      priceList.push(parseFloat(val.price.substr(1)));
     });
     if (priceList.length > 0) {
       setSubTotal(priceList.reduce((prev, curr) => prev + curr));
     }
   }, [rows]);
-  
-  useEffect(()=>{
-    percent1 = parseFloat(`${percent}`)/100
-    taxTotal = parseFloat(tax) + parseFloat(subTotal)
-    setTotal((percent1 * taxTotal) + taxTotal)
-  }, [tax, percent])
 
-  useEffect(()=> {
+  useEffect(() => {
+    percent1 = parseFloat(`${percent}`) / 100;
+    taxTotal = parseFloat(tax) + parseFloat(subTotal);
+    setTotal(percent1 * subTotal + taxTotal);
+  }, [tax, percent]);
+
+  useEffect(() => {
     if (work) {
-      rows.forEach((val)=>{
-        foodList.push(`${val.foodName} ${val.price}`)
+      rows.forEach((val) => {
+        foodList.push(`${val.foodName} ${val.price}`);
       });
-      navigation.navigate(`FoodSplitScreen`, {peopleList: peopleList, foodList: foodList, total: total} )
+      navigation.navigate(`FoodSplitScreen`, { peopleList, foodList, total });
     }
-  }, [work])
-  
-
+  }, [work]);
 
   return (
-    
     <View style={styles.container}>
+      {/* HEADING FOR NEW BILL */}
+      <Text style={styles.h1}>New Bill</Text>
 
-        {/* HEADING FOR NEW BILL */}
-        <Text style={styles.h1}>New Bill</Text>
-
+      <View style={{flex: 1, flexDirection: 'row', maxHeight: '15%'}}>
         {/* INPUT GRID */}
-      <View style={styles.inputRow}>   
-
-        {/* Food Input */}
-        <TextInput
-          style={styles.input}
-          keyboardType="default"
-          placeholder="Enter food"
-          value={foodName}
-          onChangeText={(food) => {setFoodName(food)}}
-        />
-
-        {/* Price input */}
-        <TextInput
-          style={styles.input}
-          placeholder="Total Price in $"
-          keyboardType='numeric'
-          value={price}
-          onChangeText={(p) => {setPrice(p)}}
-        />
+        <View style={styles.inputRow}>
+          <View style={styles.inputContainer}>
+            {/* Food Input */}
+            <TextInput
+              style={styles.input}
+              keyboardType="default"
+              placeholder="Enter food"
+              value={foodName}
+              onChangeText={(food) => setFoodName(food)}
+            />
+            {/* Price input */}
+            <TextInput
+              style={styles.input}
+              placeholder="Total Price in $"
+              keyboardType="numeric"
+              value={price}
+              onChangeText={(p) => setPrice(p)}
+            />
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Tip percent:"
+              value={percent}
+              keyboardType="numeric"
+              onChangeText={(percent) => setPercent(percent)}
+            />
+            <TextInput
+              style={styles.input}
+              placeholder="Enter tax:"
+              value={tax}
+              keyboardType="numeric"
+              onChangeText={(tax) => setTax(tax)}
+            />
+          </View>
+        </View>
 
         <View style={styles.button}>
-        <Button color={'white'} onPress={() => {
-          addRow()
-        }}
-          title="Add"/>
-          </View>
-        
+          <Button
+            color={'white'}
+            onPress={() => {
+              addRow();
+            }}
+            title="Add"
+          />
+        </View>
       </View>
-      
-
       {/* VIEW ONCE INFO IS ENTERED INTO EACH ROW */}
       <FlatList
         data={rows}
-        keyExtractor={item => item.id}
+        keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <Animated.View {...panResponder.panHandlers} style={[styles.row, animatedStyles]}>
             <Text>{item.foodName}</Text>
@@ -144,32 +155,20 @@ const Bill =({route}) => {
         )}
       />
 
-      
-      {/* ENTERING PERCENTAGE TIP */}
-      <View style={{flex: 1, justifyContent: 'space-between', alignItems: 'flex-end',flexDirection: 'row', marginBottom: 20}}>
-        <TextInput
-            style={{borderColor: 'black', width: '45%', borderWidth: 1, height: '20%', padding:10 }} 
-            placeholder="Tip percent:"
-            value={percent}
-            keyboardType='numeric'
-            onChangeText={(percent) => setPercent(percent)}
-        />
-        <TextInput
-            style={{borderColor: 'black', borderWidth: 1, width: '45%', height: '20%', padding: 10 }} 
-            placeholder="Enter tax:"
-            value={tax}
-            keyboardType='numeric'
-            onChangeText={(tax) => setTax(tax)}
-        />
-      </View>
       <View style={styles.button1}>
-        <Button className="btn btn-next" type="button" title={"Split"} onPress={ () => {
-          setWork(true);
-          }} color="white"/>
+        <Button
+          className="btn btn-next"
+          type="button"
+          title="Split"
+          onPress={() => {
+            setWork(true);
+          }}
+          color="white"
+        />
       </View>
-    </View> 
+    </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -178,18 +177,23 @@ const styles = StyleSheet.create({
     marginTop: 5,
     backgroundColor: 'white',
   },
-  label: {
-    fontSize: 18,
-    marginBottom: 10,
-  },
   inputRow: {
+    flex: 1,
+    flexDirection: 'column',
+    marginBottom: 10,
+    width: '80%',
+    maxHeight: '80%',
+    marginRight: 10
+  },
+  inputContainer: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 10,
+    width: '100%',
   },
   input: {
-    flex: 1,
-    marginRight: 10,
+    width: '48%', // Adjust this percentage as needed
     borderWidth: 1,
     borderColor: 'gray',
     padding: 10,
@@ -204,22 +208,26 @@ const styles = StyleSheet.create({
   },
   h1: {
     textAlign: 'center',
-    fontSize: 64
-  },
-  button: {
-    backgroundColor: '#00008B',
-    borderRadius: 3,
+    fontSize: 64,
+    fontFamily: 'Didot',
   },
   button1: {
     backgroundColor: '#00008B',
     justifyContent: 'center',
-    height: "10%",
-    width: "80%",
-    marginBottom: "10%",
-    borderRadius: "10px",
-    alignSelf: 'center'
+    height: '10%',
+    width: '80%',
+    marginBottom: '10%',
+    borderRadius: 10,
+    alignSelf: 'center',
   },
-}
-);
+  button: {
+    backgroundColor: '#00008B',
+    borderRadius: 3,
+    padding: 1,
+    fontFamily: 'Didot',
+    width: '20%',
+    height: '32%'
+  },
+});
 
 export default Bill;
