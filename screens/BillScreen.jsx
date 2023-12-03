@@ -1,5 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TextInput, Button, FlatList, StyleSheet, Animated, PanResponder } from 'react-native';
+import React, { Component, useState, useRef, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  Button,
+  FlatList,
+  StyleSheet,
+  Pressable,
+  PanResponder,
+  Animated,
+  TouchableOpacity,
+} from "react-native";
+
 import NextScreenBtn from "../components/NextScreenBtn";
 import { useNavigation } from "@react-navigation/native";
 
@@ -7,12 +19,12 @@ const Bill = ({ route }) => {
   const navigation = useNavigation();
   const peopleList = route.params.params;
   const foodList = [];
-  const priceList = [];
+  let priceList = [];
   let percent1 = 0;
   let taxTotal = 0;
 
   const [rows, setRows] = useState([]);
-  const [foodName, setFoodName] = useState('');
+  const [foodName, setFoodName] = useState("");
   const [price, setPrice] = useState(0.0);
   const [percent, setPercent] = useState(0);
   const [tax, setTax] = useState(0.0);
@@ -56,12 +68,17 @@ const Bill = ({ route }) => {
   function addRow() {
     if (foodName && price) {
       const formattedPrice = `$${price}`;
-      const newSize = 'large';
+      const newSize = "large";
 
-      const newRow = { foodName, price: formattedPrice, size: newSize, id: rows.length };
+      const newRow = {
+        foodName,
+        price: formattedPrice,
+        size: newSize,
+        id: rows.length,
+      };
       setRows([...rows, newRow]);
-      setFoodName('');
-      setPrice('');
+      setFoodName("");
+      setPrice("");
     }
   }
 
@@ -82,10 +99,18 @@ const Bill = ({ route }) => {
 
   useEffect(() => {
     if (work) {
+      priceList = [];
       rows.forEach((val) => {
         foodList.push(`${val.foodName} ${val.price}`);
+        priceList.push(parseFloat(val.price.substr(1)));
       });
-      navigation.navigate(`FoodSplitScreen`, { peopleList, foodList, total });
+      console.log(priceList);
+      navigation.navigate(`FoodSplitScreen`, {
+        peopleList: peopleList,
+        foodList: foodList,
+        total: total,
+        priceList: priceList,
+      });
     }
   }, [work]);
 
@@ -93,6 +118,7 @@ const Bill = ({ route }) => {
     <View style={styles.container}>
       {/* HEADING FOR NEW BILL */}
       <Text style={styles.h1}>New Bill</Text>
+
 
       <View style={{flex: 1, flexDirection: 'row', maxHeight: '15%'}}>
         {/* INPUT GRID */}
@@ -143,12 +169,16 @@ const Bill = ({ route }) => {
           />
         </View>
       </View>
+
       {/* VIEW ONCE INFO IS ENTERED INTO EACH ROW */}
       <FlatList
         data={rows}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <Animated.View {...panResponder.panHandlers} style={[styles.row, animatedStyles]}>
+          <Animated.View
+            {...panResponder.panHandlers}
+            style={[styles.row, animatedStyles]}
+          >
             <Text>{item.foodName}</Text>
             <Text>{item.price}</Text>
           </Animated.View>
@@ -175,7 +205,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 16,
     marginTop: 5,
-    backgroundColor: 'white',
+    backgroundColor: "white",
   },
   inputRow: {
     flex: 1,
@@ -195,14 +225,14 @@ const styles = StyleSheet.create({
   input: {
     width: '48%', // Adjust this percentage as needed
     borderWidth: 1,
-    borderColor: 'gray',
+    borderColor: "gray",
     padding: 10,
   },
   row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     borderWidth: 1,
-    borderColor: 'lightgray',
+    borderColor: "lightgray",
     padding: 20,
     marginBottom: 10,
   },
